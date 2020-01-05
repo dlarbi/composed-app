@@ -1,0 +1,11 @@
+{
+  "name": "composed-cards",
+  "version": "1.0.0",
+  "description": "Tips from Composed Nutrition",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dean Larbi",
+  "license": "ISC"
+}
