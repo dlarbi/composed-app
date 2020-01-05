@@ -31,12 +31,12 @@ class RecipesContainer extends React.Component {
     this.willFocusSubscription = this.props.navigation.addListener(
       'willFocus',
       payload => {
-        this.loadData();
+        this.loadAllRecipes();
       }
     );
   };
 
-  loadData = async () => {
+  loadAllRecipes = async () => {
     this.setState({
       loading: true
     });
@@ -49,17 +49,29 @@ class RecipesContainer extends React.Component {
   }
 
   componentDidMount = async () => {
-    await this.loadData();
+    await this.loadAllRecipes();
   }
 
   componentWillUnmount() {
     this.willFocusSubscription.remove();
   }
 
+  displayAllRecipes = () => {
+    const recipes = recipesStore.getRecipes();
+    this.setState(previousState => ({
+      recipes,
+      loading: false
+    }));
+  }
+
   searchTitle = async (text) => {
     this.setState({
       loading: true
     });
+    if (!text.length) {
+      this.displayAllRecipes();
+      return;
+    }
     await RecipesService.search({ "title": text });
     const recipes = recipesStore.getSearchedRecipes();
     this.setState(previousState => ({
@@ -76,9 +88,6 @@ class RecipesContainer extends React.Component {
         <StatusBar barStyle="dark-content" />
         <SafeAreaView>
           <ImageBackground source={BACKGROUND_IMAGES.DARK_WOOD} style={styles.bgImage}>
-            {this.state.loading &&
-              <ActivityIndicator size="large" color="#CCCCCC" style={styles.loading}/>
-            }
             <ScrollView
               contentInsetAdjustmentBehavior="automatic"
               style={styles.scrollView}>
@@ -100,14 +109,18 @@ class RecipesContainer extends React.Component {
                   }
                   </View>
                   <TextInput
-                    style={{ height: 40, borderColor: 'gray', borderWidth: 1, width: 100, backgroundColor: '#ffffff' }}
+                    style={styles.searchBarStyle}
                     onChangeText={(text) => this.searchTitle(text)}
                     value={this.state.searchTitleValue}
+                    placeholder="Search ingredients, time to cook, etc..."
+                    placeholderTextColor="white"
                   />
                   <Text style={styles.recipesListHeading}>
                     Browse all recipes
                   </Text>
-                  {
+                  {this.state.loading ?
+                    <ActivityIndicator size="large" color="#CCCCCC" style={styles.loading}/>
+                    :
                     this.state.recipes.map((recipe, i) => {
                       return (
                         <RecipeCard recipe={recipe} />
@@ -140,7 +153,8 @@ const styles = StyleSheet.create({
   },
   loading: {
     zIndex: 100,
-    marginTop: '65%'
+    marginTop: '35%',
+    width: '100%'
   },
   recipesListHeading: {
     fontFamily: 'HelveticaNeue-Thin',
@@ -155,7 +169,16 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 20
   },
-
+  searchBarStyle: {
+    height: 35,
+    padding: 10,
+    width: '90%',
+    color: '#ffffff',
+    backgroundColor: '#444444',
+    opacity: .6,
+    borderRadius: 4,
+    marginBottom: 10
+  }
 
 });
 
