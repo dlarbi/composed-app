@@ -24,7 +24,7 @@ const slides = [
   },
   {
     key: '3',
-    title: 'Lets Start Small!', 
+    title: 'Lets Start Small!',
     text: 'Community can be as simple as sending a friendly text.',
     addToolHandle: true,
     backgroundColor: '#22bcb5',

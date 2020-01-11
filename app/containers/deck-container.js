@@ -5,7 +5,7 @@ import React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  View, 
+  View,
   Text,
   StatusBar,
   ImageBackground,
@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
 import { BurstAndMoveEmitter } from 'react-native-particles'
+import LazyImage from '../components/lazy-image/lazy-image';
+
 import { Vector } from 'react-native-particles/';
 import { BACKGROUND_IMAGES } from '../constants/constants';
 import { getCardsByDeckName } from '../api/decks-api';
@@ -65,11 +67,16 @@ class DeckContainer extends React.Component {
                   const splitSentence = Utils.splitSentenceForCard(card.text);
                   return (
                     <View style={styles.card}>
-                      <ImageBackground source={image} style={styles.cardInnerWrapper}>
+                      <LazyImage
+                        source={image}
+                        style={styles.cardImage}
+                        loadingStyle={{alignItems:'center', width: '100%', height: '100%', backgroundColor: '#333'}}
+                      />
+                      <View style={styles.textWrapper}>
                         <Text style={styles.introText}>{splitSentence[0]}</Text>
                         <Text style={styles.text}>{splitSentence[1]}</Text>
                         <View style={styles.overlay} />
-                      </ImageBackground>
+                      </View>
                     </View>
                   );
                 }}
@@ -117,45 +124,53 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    borderRadius: 8,
-    top: -50,
-    marginTop: 40,
-    marginBottom: 40,
-    marginLeft: 0,
-    marginRight: 0,
-    justifyContent: "center",
-    backgroundColor: "#FFFFFF"
+    borderRadius: 18,
+    marginBottom: 100,
+    borderRadius: 8
   },
-  cardInnerWrapper: {
+  cardImage: {
     height: '100%',
-    borderRadius: 8,
+    width: '100%',
+    borderRadius: 18,
+    position: 'absolute',
+    zIndex: 0,
+    top:0,
+    left: 0,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.7)',
     zIndex: -0
   },
+  textWrapper: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    top: 0,
+    left: 0,
+    zIndex: 10,
+    paddingTop: '30%'
+  },
   text: {
     textAlign: "center",
     fontSize: 24,
     backgroundColor: "transparent",
     color: '#FFFFFF',
-    zIndex: 1,
+    zIndex: 10,
     paddingRight: 30,
     paddingLeft: 30,
     paddingBottom: 30,
     lineHeight: 36,
-    fontFamily: 'IowanOldStyle-Roman'
+    fontFamily: 'IowanOldStyle-Roman',
   },
   introText: {
     textAlign: "center",
     fontSize: 52,
     backgroundColor: "transparent",
     color: '#FFFFFF',
-    zIndex: 1,
-    paddingTop: '30%',
+    zIndex: 10,
     fontWeight: 'bold',
-    fontFamily: 'SavoyeLetPlain'
+    fontFamily: 'SavoyeLetPlain',
   },
   bgImage: {
     width: '100%',

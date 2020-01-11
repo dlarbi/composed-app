@@ -7,6 +7,7 @@ import {
   Image,
   ImageBackground
 } from 'react-native';
+import LazyImage from '../../../components/lazy-image/lazy-image';
 import { SCREEN_NAMES, ICONS } from '../../../constants/constants';
 import Utils from '../../../utils/utils';
 
@@ -35,13 +36,14 @@ class RecipeCard extends React.Component {
   render() {
     const imageBg = Utils.getRandomRecipeBgImage();
     const { recipe, onPress, } = this.props;
-    // console.log(recipe.image.Location, 'meep')
-    // const image = require(recipe.image.Location)
-    // console.log(image)
     return (
       <TouchableOpacity style={styles.recipeCard}>
         <View style={styles.recipeCardImageWrapper}>
-          <Image source={{uri: recipe.image.Location}} style={styles.recipeCardImage}/>
+          <LazyImage
+            source={{uri: recipe.image.Location}}
+            style={styles.recipeCardImage}
+            loadingStyle={{alignItems:'center', width: '100%', height: '100%', backgroundColor: '#dddddd'}}
+          />
         </View>
         <View style={styles.recipeCardHeader}>
           <Text style={styles.header}>

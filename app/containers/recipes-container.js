@@ -72,7 +72,10 @@ class RecipesContainer extends React.Component {
       this.displayAllRecipes();
       return;
     }
-    await RecipesService.search({ "title": text });
+    await RecipesService.search({
+      query: text,
+      fields: ['title', 'directions', 'stats', 'ingredients', 'notes']
+    });
     const recipes = recipesStore.getSearchedRecipes();
     this.setState(previousState => ({
       recipes,
@@ -82,7 +85,6 @@ class RecipesContainer extends React.Component {
 
   render() {
     const { navigate } = this.props.navigation;
-    console.log(this.state)
     return (
       <>
         <StatusBar barStyle="dark-content" />

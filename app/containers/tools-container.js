@@ -83,9 +83,6 @@ class ToolsContainer extends React.Component {
         <SafeAreaView>
 
           <ImageBackground source={BACKGROUND_IMAGES.DARK_WOOD} style={styles.bgImage}>
-            {this.state.loading &&
-              <ActivityIndicator size="large" color="#CCCCCC" style={styles.loading}/>
-            }
             <ScrollView
               contentInsetAdjustmentBehavior="automatic"
               style={styles.scrollView}>
@@ -117,7 +114,9 @@ class ToolsContainer extends React.Component {
                     Discover new tools to ease stress and foster joy 🧘 😌
                   </Text>
 
-                  {
+                  {this.state.loading ?
+                    <ActivityIndicator size="large" color="#CCCCCC" style={styles.loading}/>
+                    :
                     this.state.tools.map((tool, i) => {
                       return (
                         <ToolCard
@@ -179,7 +178,8 @@ const styles = StyleSheet.create({
   },
   loading: {
     zIndex: 100,
-    marginTop: '65%'
+    marginTop: '35%',
+    width: '100%'
   },
   toolsListHeading: {
     fontFamily: 'HelveticaNeue-Thin',
