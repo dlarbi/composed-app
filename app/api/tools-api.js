@@ -14,7 +14,6 @@ const getToolById = async (toolId) => {
   const tool = await fetch(`${COMPOSED_API_URL}/tools/${toolId}`)
     .then((response) => response.json())
     .then((responseJson) => {
-      console.log('responseJson', responseJson)
       return responseJson;
     });
   return tool;
@@ -30,8 +29,27 @@ const getToolsByUserId = async (userId) => {
   return tools;
 };
 
+const searchTools = async (query) => {
+  const tools = await fetch(`${COMPOSED_API_URL}/tools/search`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(query)
+  }).then((response) => response.json())
+    .then((responseJson) => {
+      if (!_.get(responseJson, 'hits.hits')) {
+        return []
+      }
+      const result = responseJson.hits.hits.map(hit => hit._source);
+      return result;
+    });
+  return tools;
+};
+
 export {
   getTools,
   getToolsByUserId,
-  getToolById
+  getToolById,
+  searchTools
 };

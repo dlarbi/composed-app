@@ -1,6 +1,7 @@
 class ToolsStore {
   constructor() {
     this.toolsById = {};
+    this.filteredToolboxToolIds = [];
   }
   setToolsById(tools) {
     const newToolsById= tools.reduce((toolsById, tool) => {
@@ -9,6 +10,12 @@ class ToolsStore {
     }, {});
     this.toolsById = Object.assign({}, this.toolsById, newToolsById);
     return this.toolsById;
+  }
+  setFilteredToolboxToolIds(toolIds) {
+    this.filteredToolboxToolIds = toolIds;
+  }
+  getFilteredToolboxToolIds() {
+    return this.filteredToolboxToolIds;
   }
   getToolsById() {
     return this.toolsById;

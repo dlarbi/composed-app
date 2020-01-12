@@ -73,7 +73,9 @@ const IMAGES = {
 };
 
 const BACKGROUND_IMAGES = {
-  DARK_WOOD: require('../assets/images/wood-bg.jpg')
+  DARK_WOOD: require('../assets/images/wood-bg.jpg'),
+  SPACE: require('../assets/images/space.jpg'),
+  TWINKLING_STARS: require('../assets/images/starsmoving.gif'),
 };
 
 export {

@@ -119,10 +119,12 @@ class ToolsContainer extends React.Component {
                     :
                     this.state.tools.map((tool, i) => {
                       return (
-                        <ToolCard
-                          tool={tool}
-                          handleToggleToolToUsersToolbox={this.handleToggleToolToUsersToolbox}
-                        />
+                        <View style={{width: '42%'}}>
+                          <ToolCard
+                            tool={tool}
+                            handleToggleToolToUsersToolbox={this.handleToggleToolToUsersToolbox}
+                          />
+                        </View>
                       );
                     })
                   }

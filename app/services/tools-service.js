@@ -2,7 +2,7 @@ import UsersService from './users-service';
 import toolsStore from '../stores/tools';
 import selfStore from '../stores/self';
 
-import { getTools, getToolsByUserId, getToolById } from '../api/tools-api';
+import { getTools, searchTools, getToolsByUserId, getToolById } from '../api/tools-api';
 
 class ToolsService {
   static async fetchTools() {
@@ -19,6 +19,15 @@ class ToolsService {
     const tools = await getToolsByUserId(userId);
     toolsStore.setToolsById(tools);
     return tools;
+  }
+  static async fetchFilteredToolboxForUser(query) {
+    const tools = await searchTools(query);
+    toolsStore.setToolsById(tools);
+
+    const user = await selfStore.getUser();
+    const filteredTools = tools.filter(tool => user.toolIds.includes(tool.id));
+
+    toolsStore.setFilteredToolboxToolIds(filteredTools.map(tool => tool.id));
   }
 };
 

@@ -13,32 +13,52 @@ import {
   ImageBackground,
   ActivityIndicator
 } from 'react-native';
-import { BACKGROUND_IMAGES } from '../constants/constants';
+import AppIntroSlider from 'react-native-app-intro-slider';
+
+import { BACKGROUND_IMAGES, SCREEN_NAMES } from '../constants/constants';
 import selfStore from '../stores/self';
 import ToolsService from '../services/tools-service';
 import UsersService from '../services/users-service';
 
 import ToolsSelector from '../selectors/tools';
 import ToolCard from './components/tool/tool-card';
+import ToolboxIntroSlides from './components/toolbox/toolbox-intro-slides';
 
 class ToolboxContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      tools: []
+      tools: [],
+      displayIntro: true
     };
   };
 
-  componentDidMount = async () => {
+  // gets toolbox data according to the category, time, etc specifications entered by the user
+  loadFilteredToolBoxData = async (category, ms) => {
+    this.setState({
+      loading: true
+    });
+    const tools = await ToolsService.fetchFilteredToolboxForUser({ category, ms });
+    this.setState(previousState => ({
+      tools: ToolsSelector.selectFilteredToolboxForUser(),
+      loading: false
+    }));
+  }
+
+  loadAllToolboxData = async () => {
     this.setState({
       loading: true
     });
     const user = await selfStore.getUser();
-    await ToolsService.fetchToolsByUserId(user.id);
+    const tools = await ToolsService.fetchToolsByUserId(user.id);
     this.setState(previousState => ({
       tools: ToolsSelector.selectLoggedInUserToolbox(),
       loading: false
     }));
+  }
+
+  componentDidMount = async () => {
+    await this.loadAllToolboxData();
   };
 
   handleToggleToolToUsersToolbox = async (toolId) => {
@@ -53,75 +73,111 @@ class ToolboxContainer extends React.Component {
     }
   };
 
+  renderItem = ({ item }) => {
+    return (
+      <ImageBackground style={styles.slide} source={BACKGROUND_IMAGES.TWINKLING_STARS}>
+        {item.content.image &&
+          <Image source={item.content.image} style={styles.bgImage} />
+        }
+        {item.content.image &&
+          <View style={styles.overlay} />
+        }
+        <Text style={styles.title}>{item.name}</Text>
+        <Text style={styles.text}>{item.content && item.content.text}</Text>
+        <View style={styles.overlay} />
+      </ImageBackground>
+    );
+  }
+
+  onToolboxDone = () => {
+    this.props.navigation.navigate(SCREEN_NAMES.TOOLS);
+  }
+
+  onIntroDone = () => {
+    this.setState({
+      displayIntro: false
+    });
+  }
+
   render() {
     const { navigate } = this.props.navigation;
-
     return (
       <>
         <StatusBar barStyle="dark-content" />
-        <SafeAreaView>
-          <ImageBackground source={BACKGROUND_IMAGES.DARK_WOOD} style={styles.bgImage}>
-
-            {this.state.loading &&
-              <ActivityIndicator size="large" color="#CCCCCC" style={styles.loading}/>
+        {this.state.loading ?
+          <ActivityIndicator size="large" color="#CCCCCC" style={styles.loading}/>
+          :
+          <SafeAreaView style={styles.introWrapper}>
+            {this.state.displayIntro ?
+              <ToolboxIntroSlides tools={this.state.tools} onDone={this.onIntroDone} />
+              :
+              <AppIntroSlider slides={this.state.tools} renderItem={this.renderItem} bottomButton onDone={this.onToolboxDone} />
             }
-            <View style={styles.toolContainer}>
-
-              <Text style={styles.toolsListHeading}>
-                Your Relaxation Toolbox
-              </Text>
-
-              {!this.state.tools.length &&
-                <Text style={styles.emptyMessage}>Your toolbox is empty...</Text>
-              }
-
-              {
-                this.state.tools.map((tool, i) => {
-                  return (
-                    <ToolCard
-                      tool={tool}
-                      handleToggleToolToUsersToolbox={() => {this.handleToggleToolToUsersToolbox(tool.id)}}
-                    />
-                  );
-                })
-              }
-            </View>
-          </ImageBackground>
-        </SafeAreaView>
+          </SafeAreaView>
+        }
       </>
     );
   }
 };
 
 const styles = StyleSheet.create({
-  bgImage: {
-    height: '100%',
-  },
   loading: {
     zIndex: 100,
     marginTop: '65%'
   },
-  toolContainer: {
-    flex: 1,
+  introWrapper: {
+    zIndex: 300,
+    position:'absolute',
+    top:0,
+    left:0,
     height: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    flexWrap: 'wrap',
-    paddingTop: '5%'
+    width: '100%'
   },
-  toolsListHeading: {
+  bgImage: {
+    top: 0,
+    left: 0,
+    position: 'absolute',
+    height: '100%',
+    zIndex: 0
+  },
+  image: {
+    width: 200,
+    height: 100,
+    resizeMode: 'contain',
+    marginBottom: 30
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: -0
+  },
+  title: {
+    fontSize: 36,
+    fontFamily: 'HelveticaNeue-Bold',
+    color: '#FFFFFF',
+    textAlign: 'center',
+    marginBottom: 20,
+    zIndex: 1
+  },
+  text: {
+    fontSize: 22,
     fontFamily: 'HelveticaNeue-Thin',
     color: '#FFFFFF',
-    fontSize: 28,
-    width: '90%'
+    textAlign: 'center',
+    zIndex: 1,
   },
-  emptyMessage: {
-    fontFamily: 'HelveticaNeue-Thin',
-    color: '#FFFFFF',
-    fontSize: 18,
-    width: '90%',
-    marginTop: 25
-  }
+  slide: {
+    height: '100%',
+    width: '100%',
+    backgroundColor: '#68c3b6',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    zIndex: -0
+  },
 });
 
 export default ToolboxContainer;

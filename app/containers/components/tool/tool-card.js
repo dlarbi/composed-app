@@ -48,10 +48,9 @@ class ToolCard extends React.Component {
 
 const styles = StyleSheet.create({
   toolCard: {
-    width: '90%',
     backgroundColor: '#ffffff',
     marginTop: 15,
-    marginBottom: 30,
+    marginBottom: 15,
     borderRadius: 8
   },
   toolCardImageWrapper: {

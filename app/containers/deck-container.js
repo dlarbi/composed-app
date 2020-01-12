@@ -126,7 +126,8 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 18,
     marginBottom: 100,
-    borderRadius: 8
+    borderRadius: 8,
+    backgroundColor: '#1d5067'
   },
   cardImage: {
     height: '100%',

@@ -31,7 +31,7 @@ const slides = [
   }
 ];
 
-const FRIENDLY_TEXT_TOOL_ID = 'bc0a7da9-af91-4884-a22d-86a23cc4739f';
+const FRIENDLY_TEXT_TOOL_ID = 'ec46da24-9f00-4351-9c4d-b28d30e245f0';
 
 export default class Intro extends React.Component {
   constructor(props) {

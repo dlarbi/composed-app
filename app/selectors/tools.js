@@ -20,8 +20,31 @@ function selectIsInUserToolbox(toolId) {
   return user.toolIds.indexOf(toolId) > -1;
 };
 
+function selectUsersCategoriesFromTools() {
+  const tools = selectLoggedInUserToolbox();
+  return tools.reduce((result, tool) => {
+    if (!tool.category) {
+      return result;
+    }
+    tool.category.forEach(category => {
+      if (result.indexOf(category) === -1) {
+        result.push(category);
+      }
+    })
+    return result;
+  }, []);
+}
+
+function selectFilteredToolboxForUser() {
+  const toolsById = toolsStore.getToolsById();
+  const filteredToolboxToolIds = toolsStore.getFilteredToolboxToolIds();
+  return filteredToolboxToolIds.map(id => toolsById[id]);
+}
+
 export default {
   selectToolById,
   selectLoggedInUserToolbox,
-  selectIsInUserToolbox
+  selectIsInUserToolbox,
+  selectUsersCategoriesFromTools,
+  selectFilteredToolboxForUser
 };
